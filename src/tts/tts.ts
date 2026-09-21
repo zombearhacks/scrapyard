@@ -15,6 +15,16 @@ const PROJECT_ROOT = path.resolve(import.meta.dirname, "..", "..");
 const PYTHON = join(PROJECT_ROOT, ".venv", "bin", "python3");
 const TTS_WORKER = join(PROJECT_ROOT, "scripts", "tts_worker.py");
 
+// Two-announcer duo, alternating by line order (a hype voice + a gruff deep voice going back
+// and forth) — a flat single TTS voice reading "OHHHH!" in a monotone doesn't land, per Mike's
+// listening check on the first pass. Broadcast-punch processing (pitch/tempo push, compression,
+// presence EQ) is applied to every line in the final mix below, not just this comparison.
+const KOKORO_SAMPLE_RATE = 24000;
+const ENHANCE_FILTER =
+  `asetrate=${KOKORO_SAMPLE_RATE}*1.07,aresample=${KOKORO_SAMPLE_RATE},atempo=1.08,` +
+  "acompressor=threshold=-18dB:ratio=5:attack=5:release=80:makeup=6dB," +
+  "equalizer=f=2500:t=q:w=1.5:g=4,alimiter=limit=0.95";
+
 export interface PackedLine {
   id: number;
   text: string;
@@ -41,7 +51,7 @@ async function synthesizeLines(
       resolve(new Map(results.map((r) => [r.id, r.duration_s])));
     });
     proc.on("error", reject);
-    proc.stdin.write(JSON.stringify(lines.map((l) => ({ id: l.id, text: l.text }))));
+    proc.stdin.write(JSON.stringify(lines.map((l, i) => ({ id: l.id, text: l.text, speaker: i % 2 }))));
     proc.stdin.end();
   });
 }
@@ -117,7 +127,7 @@ export async function buildAudioPackage(
   const audioPath = join(outDir, "audio.opus");
   const inputArgs = packedLines.flatMap((l) => ["-i", join(wavDir, `${l.id}.wav`)]);
   const delayFilters = packedLines
-    .map((l, i) => `[${i}:a]adelay=${Math.round(l.start_s * 1000)}|${Math.round(l.start_s * 1000)}[a${i}]`)
+    .map((l, i) => `[${i}:a]${ENHANCE_FILTER},adelay=${Math.round(l.start_s * 1000)}|${Math.round(l.start_s * 1000)}[a${i}]`)
     .join(";");
   const mixInputs = packedLines.map((_, i) => `[a${i}]`).join("");
   const filterComplex =
