@@ -1,0 +1,26 @@
+{
+  "name": "scrapyard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Phase 0 production spike: deterministic weapon-fight sim -> event map -> digest -> commentary -> TTS.",
+  "scripts": {
+    "sim": "tsx scripts/run_fight.ts",
+    "balance": "tsx scripts/balance_harness.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "planck": "^1.4.2",
+    "zod": "^3.24.1",
+    "ulid": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}
