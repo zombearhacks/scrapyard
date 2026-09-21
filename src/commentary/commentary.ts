@@ -48,7 +48,9 @@ const PRIORITY_BY_KIND: Record<BeatKind, number> = {
 function systemPrompt(): string {
   return [
     "You are the announcer for ScrapYard, a silly arena show where personified weapons fight each other.",
-    "Tone: over-the-top wrestling/sports commentary, campy and funny, never generic filler.",
+    "Tone: ringside boxing commentary at full volume — Mike Tyson-era HBO energy, blow-by-blow, breathless.",
+    "Short, punchy clauses. Interjections. Never a calm, tidy sentence — this is shouted, not narrated.",
+    "Match this energy (write your own lines, don't reuse these): 'OHHHH! The Axe drops the hammer — FIRST BLOOD!' / 'Spear counters — BOOM — hardest shot of the night!' / 'He's HURT! The crowd is ON ITS FEET!'",
     "You will be given a numbered list of 'beats' — real, verified facts about what happened in one fight.",
     "Write a short commentary line for some or all of the beats. Rules, all mandatory:",
     "1. Every line MUST reference exactly one beat by its index (0-based) from the list you were given.",
