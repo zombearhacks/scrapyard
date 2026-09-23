@@ -1,6 +1,7 @@
 node_modules/
 dist/
 out/
+.next/
 *.log
 .DS_Store
 .venv/

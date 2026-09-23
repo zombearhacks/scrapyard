@@ -1,7 +1,7 @@
 import * as planck from "planck";
 import { ulid } from "ulid";
 import { Rng } from "./rng.js";
-import { getWeapon, type WeaponDef } from "./weapons.js";
+import { getWeapon, weaponRadius, type WeaponDef } from "./weapons.js";
 import { clamp, round1 } from "./utils.js";
 import { SCHEMA_VERSION, type FightConfig, type FightEvent, type FightMap, type SwingState } from "./types.js";
 
@@ -34,8 +34,8 @@ export function simulateFight(config: FightConfig): FightMap {
 
   const weapons = config.weaponIds.map(getWeapon) as [WeaponDef, WeaponDef];
   const radii: [number, number] = [
-    22 + weapons[0].attrs.size * 4,
-    22 + weapons[1].attrs.size * 4,
+    weaponRadius(weapons[0].attrs.size),
+    weaponRadius(weapons[1].attrs.size),
   ];
 
   const world = new planck.World();

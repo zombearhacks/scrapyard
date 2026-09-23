@@ -41,6 +41,13 @@ export const WEAPONS: readonly WeaponDef[] = [
   },
 ];
 
+// Shared by the sim (collision/engage-range math) and the renderer (draw size) so the two
+// never drift into two different definitions of "how big is this fighter" — decision #4's
+// whole point, applied to this one number.
+export function weaponRadius(size: number): number {
+  return 22 + size * 4;
+}
+
 export function getWeapon(id: string): WeaponDef {
   const w = WEAPONS.find((w) => w.id === id);
   if (!w) throw new Error(`Unknown weapon id: ${id}`);
